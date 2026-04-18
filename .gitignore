@@ -1,3 +1,8 @@
+# SPECIFICS
+logs.txt
+live_screen.png
+debug_board_scanned.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
