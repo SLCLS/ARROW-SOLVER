@@ -4,23 +4,24 @@ from core.board import ArrowBoard
 class ArrowSolver:
     def __init__(self, board, verbose=False):
         self.board = board
-        self.solution_taps = []
+
+        self.tap_map = {} 
         self.verbose = verbose
 
     def _tap(self, q, r, times):
-        """Executes multiple taps and logs them for the ADB batcher."""
-        times = times % 6
+        """Executes taps internally and collapses redundant moves modulo 6."""
         if times == 0:
             return
-        
+
+        current_taps = self.tap_map.get((q, r), 0)
+        self.tap_map[(q, r)] = (current_taps + times) % 6
+
         for _ in range(times):
             self.board.tap(q, r)
-            self.solution_taps.append((q, r))
 
-            if self.verbose:
-                step_num = len(self.solution_taps)
-                print(f"\n[Step {step_num}] Tapped ({q}, {r})")
-                self.board.print_board()
+        if self.verbose:
+            print(f"\n[INTERNAL] Tapped ({q}, {r}) {times} times.")
+            self.board.print_board()
 
     def propagate(self):
         """
@@ -40,7 +41,7 @@ class ArrowSolver:
                             self._tap(q, r + 1, taps_needed)
 
     def execute_endgame(self):
-        """Executes the a, b, c, d logic from the documentation."""
+        """Executes the parity alignment logic."""
         if self.verbose:
             print("\n>>> STARTING ENDGAME SEQUENCE <<<")
             
@@ -65,14 +66,19 @@ class ArrowSolver:
             self._tap(*c, 3)
 
     def solve(self):
-        """Master sequence to fully solve the board."""
-        self.solution_taps.clear()
+        """Master sequence returning an absolutely minimal physical execution array."""
+        self.tap_map.clear()
         
         self.propagate()
         self.execute_endgame()
         self.propagate()
         
-        return self.solution_taps
+        optimized_sequence = []
+        for coord, count in self.tap_map.items():
+            if count > 0:
+                optimized_sequence.extend([coord] * count)
+                
+        return optimized_sequence
 
 if __name__ == "__main__":
     test_board = ArrowBoard()
@@ -88,7 +94,7 @@ if __name__ == "__main__":
     print("========================================")
     test_board.print_board()
     
-    solver = ArrowSolver(test_board, verbose=True)
+    solver = ArrowSolver(test_board, verbose=False)
     solution = solver.solve()
     
     print("\n========================================")
@@ -97,14 +103,6 @@ if __name__ == "__main__":
     test_board.print_board()
     
     if test_board.is_solved():
-        print(f"SUCCESS! Board solved in {len(solution)} total individual taps.")
-
-        from collections import Counter
-        tap_counts = Counter(solution)
-        print("\nOptimal Batched Execution Sequence:")
-        for coord, count in tap_counts.items():
-            actual_taps = count % 6
-            if actual_taps != 0:
-                print(f"Tap {coord}: {actual_taps} times")
+        print(f"SUCCESS! Board solved in exactly {len(solution)} optimized physical taps.")
     else:
         print("FAILED: Board is not solved.")
