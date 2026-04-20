@@ -1,0 +1,5 @@
+# Auto-generated Scrcpy Bridge Requirements
+scrcpy-client
+av
+adbutils==0.14.1
+setuptools==69.5.1

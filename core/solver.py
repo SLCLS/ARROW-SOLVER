@@ -1,10 +1,11 @@
 import random
+import itertools
+import time
 from core.board import ArrowBoard
 
 class ArrowSolver:
     def __init__(self, board, verbose=False):
         self.board = board
-
         self.tap_map = {} 
         self.verbose = verbose
 
@@ -25,12 +26,9 @@ class ArrowSolver:
 
     def propagate(self):
         """
-        Sweeps the board from top to bottom.
-        Uses the down-right neighbor (q, r+1) to fix the tile (q, r).
+        Sweeps the board downward. 
+        Forces the row below to fix the row above it.
         """
-        if self.verbose:
-            print("\n>>> STARTING PROPAGATION SWEEP <<<")
-            
         for r in range(-3, 3):
             for q in range(-3, 4):
                 if (q, r) in self.board.tiles:
@@ -40,45 +38,59 @@ class ArrowSolver:
                         if (q, r + 1) in self.board.tiles:
                             self._tap(q, r + 1, taps_needed)
 
-    def execute_endgame(self):
-        """Executes the parity alignment logic."""
-        if self.verbose:
-            print("\n>>> STARTING ENDGAME SEQUENCE <<<")
-            
-        A, B, C, D = (0, 3), (1, 2), (2, 1), (3, 0)
-        a, b, c, d = (0, -3), (1, -3), (2, -3), (3, -3)
-
-        val_C = self.board.tiles[C]
-        val_a = self.board.tiles[a]
-        taps_for_a = (val_C - val_a) % 6
-        self._tap(*a, taps_for_a)
-
-        taps_to_solve_C = (7 - self.board.tiles[C]) % 6
-        self._tap(*b, taps_to_solve_C)
-        self._tap(*d, taps_to_solve_C)
-
-        taps_to_solve_D = (7 - self.board.tiles[D]) % 6
-        self._tap(*a, taps_to_solve_D)
-
-        val_B = self.board.tiles[B]
-        val_D = self.board.tiles[D]
-        if (val_B + val_D) % 2 != 0:
-            self._tap(*c, 3)
-
     def solve(self):
-        """Master sequence returning an absolutely minimal physical execution array."""
+        """
+        Exhaustive Null Space Traversal.
+        Simulates all states of the top edge to find the shortest physical execution path.
+        """
+        initial_tiles = self.board.tiles.copy()
+        
+        best_sequence = []
+        min_taps = float('inf')
+        best_top_taps = None
+        
+        top_row = [(0, -3), (1, -3), (2, -3), (3, -3)]
+        
+        original_verbose = self.verbose
+        self.verbose = False
+        
+        for top_taps in itertools.product(range(6), repeat=4):
+            self.board.tiles = initial_tiles.copy()
+            self.tap_map.clear()
+            
+            for i, coord in enumerate(top_row):
+                self._tap(*coord, top_taps[i])
+                
+            self.propagate()
+            
+            if all(val == 1 for val in self.board.tiles.values()):
+                current_cost = sum(self.tap_map.values())
+                if current_cost < min_taps:
+                    min_taps = current_cost
+                    best_top_taps = top_taps
+
+        if best_top_taps is None:
+            if self.verbose:
+                print("[!] Mathematical Anomaly: Null Space traversal failed. Unsolvable board state.")
+            return []
+                    
+        self.verbose = original_verbose
+        if self.verbose:
+            print(f"\n>>> OPTIMAL GENERATOR FOUND: {best_top_taps} <<<")
+            
+        self.board.tiles = initial_tiles.copy()
         self.tap_map.clear()
         
-        self.propagate()
-        self.execute_endgame()
+        for i, coord in enumerate(top_row):
+            self._tap(*coord, best_top_taps[i])
+            
         self.propagate()
         
-        optimized_sequence = []
         for coord, count in self.tap_map.items():
             if count > 0:
-                optimized_sequence.extend([coord] * count)
+                best_sequence.extend([coord] * count)
                 
-        return optimized_sequence
+        return best_sequence
 
 if __name__ == "__main__":
     test_board = ArrowBoard()
@@ -95,7 +107,10 @@ if __name__ == "__main__":
     test_board.print_board()
     
     solver = ArrowSolver(test_board, verbose=False)
+    
+    math_start = time.perf_counter()
     solution = solver.solve()
+    math_end = time.perf_counter()
     
     print("\n========================================")
     print("       [FINAL STATE & STATISTICS]       ")
@@ -103,6 +118,8 @@ if __name__ == "__main__":
     test_board.print_board()
     
     if test_board.is_solved():
-        print(f"SUCCESS! Board solved in exactly {len(solution)} optimized physical taps.")
+        print(f"SUCCESS! Board solved.")
+        print(f"Physical Taps Required: {len(solution)}")
+        print(f"Mathematical CPU Calculation Time: {(math_end - math_start):.4f} seconds.")
     else:
         print("FAILED: Board is not solved.")
