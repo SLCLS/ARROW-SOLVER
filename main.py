@@ -134,18 +134,18 @@ def run_bot(logger):
             logger.log_run(total_time)
 
             print("[AUTO] Waiting for tiles to settle...")
-            time.sleep(0.25)
+            time.sleep(0.1)
             
             print("[VALIDATOR] Re-scanning for verification...")
         
         print("[AUTO] Animations finished. Proceeding to next level.")
-        time.sleep(0.25) 
+        time.sleep(0) 
         
         print("[ADB] Tapping 'Claim Stars' button...")
         adb.tap_pixel(*CLAIM_BUTTON_POS)
         
         print("[AUTO] Waiting for next level to fade in...")
-        time.sleep(0.25)
+        time.sleep(0)
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
