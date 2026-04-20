@@ -1,4 +1,4 @@
-## 🥵 KRAZY AHH PROGRAM
+# <h2><p align="center">**ARROW SOLVER (EXPERT)**</p></h2>
 
 This Python program is a fully autonomous, high-speed solver for the **Arrow Puzzle** in ***Expert difficulty*** for the game "Exponential Idle". It implements Computer Vision using **OpenCV** (`cv2`), specifically utilizing *Canny Edge Detection* to isolate and recognize numerical shapes with 100% accuracy, entirely bypassing UI background noise and color variations. For device integration, it uses **ADB** libraries in favor of native Python `subprocess` to compile and push batched *Unix shell commands* over the USB bridge (or wirelessly), eliminating input latency and allowing for instantaneous multi-tap sequences. The framework features a completely self-driving execution loop, a persistent statistics logger, and a *validation gate* that autonomously re-scans the screen to validate board completion before claiming rewards.
 
