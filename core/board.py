@@ -5,7 +5,6 @@ class ArrowBoard:
         self._initialize_board()
 
     def _initialize_board(self):
-
         for q in range(-self.radius, self.radius + 1):
             for r in range(-self.radius, self.radius + 1):
                 if abs(q + r) <= self.radius:
@@ -26,14 +25,14 @@ class ArrowBoard:
     def tap(self, q, r):
         if (q, r) not in self.tiles:
             raise ValueError(f"Coordinate ({q}, {r}) is out of bounds.")
-        
+
         self._increment(q, r)
-        
+ 
         for nq, nr in self.get_neighbors(q, r):
             self._increment(nq, nr)
 
     def _increment(self, q, r):
-        self.tiles[(q, r)] = (self.tiles[(q, r)] % 2) + 1
+        self.tiles[(q, r)] = (self.tiles[(q, r)] % 6) + 1
 
     def print_board(self):
         print("\n--- Current Board State ---")
@@ -49,7 +48,7 @@ class ArrowBoard:
 if __name__ == "__main__":
     board = ArrowBoard()
     
-    print("Interactive Board Simulator (Mod 2)")
+    print("Interactive Board Simulator (Mod 6)")
     print("Type coordinates as 'q,r' to tap a tile (e.g., '0,0').")
     print("Type 'exit' to quit.\n")
     
