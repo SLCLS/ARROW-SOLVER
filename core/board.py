@@ -34,6 +34,19 @@ class ArrowBoard:
     def _increment(self, q, r):
         self.tiles[(q, r)] = (self.tiles[(q, r)] % 6) + 1
 
+    def set_state(self, state_dict):
+        """Injects a known board state."""
+        for coord, val in state_dict.items():
+            if coord in self.tiles:
+                if 1 <= val <= 6:
+                    self.tiles[coord] = val
+                else:
+                    raise ValueError(f"Tile value must be 1-6. Got {val}.")
+
+    def is_solved(self):
+        """Checks if all tiles are exactly 1."""
+        return all(val == 1 for val in self.tiles.values())
+
     def print_board(self):
         print("\n--- Current Board State ---")
         for r in range(-self.radius, self.radius + 1):
