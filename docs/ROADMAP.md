@@ -1,0 +1,6 @@
+- Add Board Simulation Program
+- Create the core solver program
+- Develop the computer vision module (probably with opencv)
+- Create the ADB module
+- Add SCRCPY support for lower latency
+- Integrate via the main program
