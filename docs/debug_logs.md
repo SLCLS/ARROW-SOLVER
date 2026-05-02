@@ -42,3 +42,8 @@ adb shell screencap -p /sdcard/screen.png
 adb pull /sdcard/screen.png
 
 (for some reason it didn't worked)
+
+Okay, so I kinda figured out why. I used the coordinate based interface (flat-topped hexagonal grid) to calibrate but the game UI uses the regular pointy chip like hexagon. Making some adjustments.
+
+2. Added the required dependencies on requirements.txt
+pip freeze > requirements.txt
