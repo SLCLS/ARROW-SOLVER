@@ -45,5 +45,9 @@ adb pull /sdcard/screen.png
 
 Okay, so I kinda figured out why. I used the coordinate based interface (flat-topped hexagonal grid) to calibrate but the game UI uses the regular pointy chip like hexagon. Making some adjustments.
 
+Results of my screen based coordinates are added on a new file at root "config.py" (should've probably made it a json file, but it won't be large though so I'll leave it as is.)
+
+Also see /vision/calibration and /vision/templates (this is probably standard for all devices unless someone is tweaking the app UI).
+
 2. Added the required dependencies on requirements.txt
 pip freeze > requirements.txt
