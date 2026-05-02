@@ -51,3 +51,5 @@ Also see /vision/calibration and /vision/templates (this is probably standard fo
 
 2. Added the required dependencies on requirements.txt
 pip freeze > requirements.txt
+
+3. Added a scanner.py module after a long documentation and tutorial binged. For some reason though, it's really not detecting anything properly. It returns only 1, 5, and 6. Still needs a lot of debugging but i'll try to check how can I properly identify the numbers on the screen.
