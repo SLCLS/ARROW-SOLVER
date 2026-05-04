@@ -57,3 +57,4 @@ pip freeze > requirements.txt
 INSIGHTS AND CHANGES:
 So I just learned that the program that I created earlier is actually acting as a pixel counter and identifying the number based on it. Unfortunately, due to the variance in the photos of the numbers that I took using a screenshot of my phone and windows snipping tool... It got messed up. So I decided to try another solution: "Canny Edge Detection".
 
+5/42026:

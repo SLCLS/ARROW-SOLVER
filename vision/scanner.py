@@ -1,7 +1,6 @@
 import cv2
 import os
 import sys
-import shutil
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import screen_map
@@ -12,11 +11,6 @@ class BoardScanner:
         self.templates = {}
         self.__load_templates()
         self.crop_size = 100
-
-        self.debug_dir = os.path.join(self.script_dir, "debug_crops")
-        if os.path.exists(self.debug_dir):
-            shutil.rmtree(self.debug_dir)
-        os.makedirs(self.debug_dir)
     
     def __load_templates(self):
         for i in range(1,7):
@@ -30,20 +24,24 @@ class BoardScanner:
             self.templates[i] = edges
     
     def scan(self, image_path):
-        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-        if img is None:
+
+        img_color = cv2.imread(image_path)
+        img_gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+
+        if img_gray is None:
             raise FileNotFoundError(f"Could not read image at {image_path}")
 
         board_state = {}
         half_c = self.crop_size // 2
 
         for coord, (x, y) in screen_map.items():
-            roi = img[y - half_c : y + half_c, x - half_c : x + half_c]
+            y1 = max(0, y - half_c)
+            y2 = min(img_grayy.shape[0], y + half_c)
+            x1 = max(0, x - half_c)
+            x2 = min(img_gray.shape[1], x + half_c)
 
+            roi = img_gray[y1:y2, x1:x2]
             edges_roi = cv2.Canny(roi, 50, 150)
-
-            debug_path = os.path.join(self.debug_dir, f"hex_{coord[0]}_{coord[1]}.png")
-            cv2.imwrite(debug_path, edges_roi)
 
             best_math_val = -1
             best_match_score = -1
@@ -62,6 +60,16 @@ class BoardScanner:
 
             board_state[coord] = best_match_val
 
+            cv2.putText(img_color, f"{coord[0]},{coord[1]}", (x - 50, y - 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            
+            cv2.putText(img_color, str(best_match_val), (x - 20, y + 20),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 255, 0), 4)
+            
+            debug_out = os.path.join(self.script_dir, "debug_board_scanned.png")
+            cv2.imwrite(debug_out, img_color)
+            print(f"\n[!] Visual Debug Image Saved to: {debug_out}")
+
         return board_state
     
 if __name__ == "__main__":
@@ -74,9 +82,6 @@ if __name__ == "__main__":
         print(">>> SCAN COMPLETE <<<")
         for coord, val in state.items():
             print(f"Hex {coord} -> Value: {val}")
-
-        print("\n[!] Debug crops saved to: projects/INDEPENDENT/Arrow-Solver-2/vision/debug_crops/")
-        print("[!] Check this folder. You should see perfect black-and-white outlines of your numbers.")
 
     except Exception as e:
         print(f"Error while scanning: {e}:")
