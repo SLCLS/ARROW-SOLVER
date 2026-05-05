@@ -80,3 +80,8 @@ which rather pulls the image with color instead of just it looking at the graysc
 NOTE: Although the CV program is working, it still only returns ~70% recognition accuracy. I have identified that initial static template I provided to feed the program introduced scaling artifacts and inconsistencies on the dimension itself which     may have contributed to some of the errors. Planning to use `adb screencap` to automatically capture a uniform image of all the tiles (then selecting one of each state).
 
 ### 2. Added `auto_template.py` that solves the exact issue that I've been encountering earlier with the inaccurate cv reading. It basically uniformly captures a uniform and perfect template of each state based on the coordinates provided. (replaced the images on `/vision/templates` already)
+
+NOTE: All goods for the computer vision, returns the correct value of each tile 100% of the time. Also, worth noting, even if the night screen is enabled and is being fed, the program seems to still be working well enough to not return any inaccuracy or errors.
+
+### 3. Added the ADB input output module (`adb_ctrl.py`)
+super sleepy rn, i'll test it out later today.
