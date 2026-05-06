@@ -28,14 +28,15 @@ Wherein to solve it, I followed the documented algorithm:
 
 I added verbosity so I can manually verify its taps. A random puzzle board usually shows 100+ moves in average so it's just simply impractical for me to counter-check it manually one by one. But I analyzed most of the end game part, considering the proper coordinate checks, neighbor relations, and accuracy of the algorithm. Seems to be working well, proceeding to vision tomorrow morning.
 
-ADDITIONAL TAKE-AWAY FOR IMPROVEMENT:
+#### ADDITIONAL TAKE-AWAY FOR IMPROVEMENT:
 - 100 moves seems absurd, I'll check on how to optimize this later on.
 
 ## 03/02/2026:
 
 Fought of some issues with android adb, numpy, and opencv all throughout the day since my bleeding edge python version is unsupported by some of the dependencies.
 
-### 1. Added calibrate.py which functions as a helper for vision.py. It essentially identifies the proper placement of the tiles and coordinates based on the distance of the center tile. To be honest, I could've opted not to add this module entirely and rather just map the coordinates of each tile manually, but I really wanted this project to be shippable and useable for everyone. It basically we can extract the base x and y origin and the horizontal pixel spacing (represented by W). It's a regular hexagon, so the vertical spacing  is just W x {sqrt(3)/(2)}. I used it to project the exact center of all hte 37 tiles based on the 0,0 and 1,0 tile.
+### 1. Added calibrate.py
+Functions as a helper for vision.py. It essentially identifies the proper placement of the tiles and coordinates based on the distance of the center tile. To be honest, I could've opted not to add this module entirely and rather just map the coordinates of each tile manually, but I really wanted this project to be shippable and useable for everyone. It basically we can extract the base x and y origin and the horizontal pixel spacing (represented by W). It's a regular hexagon, so the vertical spacing  is just W x {sqrt(3)/(2)}. I used it to project the exact center of all hte 37 tiles based on the 0,0 and 1,0 tile.
 
 Testing logs:
 `adb shell screencap -p /sdcard/screen.png`
@@ -52,14 +53,17 @@ Also see `/vision/calibration` and `/vision/templates` (this is probably standar
 ### 2. Added the required dependencies on requirements.txt
 `pip freeze > requirements.txt`
 
-### 3. Added a scanner.py module after a long documentation and tutorial binged. For some reason though, it's really not detecting anything properly. It returns only 1, 5, and 6. Still needs a lot of debugging but i'll try to check how can I properly identify the numbers on the screen.
+### 3. Added scanner.py module:
+For some reason though, it's really not detecting anything properly. It returns only 1, 5, and 6. Still needs a lot of debugging but i'll try to check how can I properly identify the numbers on the screen.
 
-INSIGHTS AND CHANGES:
+#### INSIGHTS AND CHANGES:
 So I just learned that the program that I created earlier is actually acting as a pixel counter and identifying the number based on it. Unfortunately, due to the variance in the photos of the numbers that I took using a screenshot of my phone and windows snipping tool... It got messed up. So I decided to try another solution: "Canny Edge Detection".
 
 ## 05/04/2026:
 
-### 1. Finally been able to make the computer vision module (`scanner.py`) work. I adjustedd crop_size from 100 to 180 (found this to have optimally covered all of the patterns on each number), and i removed the `/debug_crops` function after verifying that the program is stable enough. Made some changes on the dimenton as well:
+### 1. Finally been able to make the computer vision module (`scanner.py`) work.
+
+I adjusted crop_size from 100 to 180 (found this to have optimally covered all of the patterns on each number), and i removed the `/debug_crops` function after verifying that the program is stable enough. Made some changes on the dimenton as well:
 ```
 y1 = max(0, y - half_c)
 y2 = min(img_gray.shape[0], y + half_c)
@@ -79,9 +83,19 @@ which rather pulls the image with color instead of just it looking at the graysc
 
 NOTE: Although the CV program is working, it still only returns ~70% recognition accuracy. I have identified that initial static template I provided to feed the program introduced scaling artifacts and inconsistencies on the dimension itself which     may have contributed to some of the errors. Planning to use `adb screencap` to automatically capture a uniform image of all the tiles (then selecting one of each state).
 
-### 2. Added `auto_template.py` that solves the exact issue that I've been encountering earlier with the inaccurate cv reading. It basically uniformly captures a uniform and perfect template of each state based on the coordinates provided. (replaced the images on `/vision/templates` already)
+### 2. Added `auto_template.py`
+It solves the exact issue that I've been encountering earlier with the inaccurate cv reading. It basically uniformly captures a uniform and perfect template of each state based on the coordinates provided. (replaced the images on `/vision/templates` already)
 
 NOTE: All goods for the computer vision, returns the correct value of each tile 100% of the time. Also, worth noting, even if the night screen is enabled and is being fed, the program seems to still be working well enough to not return any inaccuracy or errors.
 
 ### 3. Added the ADB input output module (`adb_ctrl.py`)
-super sleepy rn, i'll test it out later today.
+I added the first (planning to add scrcpy support soon, and maybe a possible support for apple automation in the future) Input/Output controller for android devices using ADB (android debug bridge). The program includes basic initialization checks and pull the data from the screen mapping and taps (batched ADB shell command for faster execution and less cumulative latency, see `execute_sequence` on the program...) based on the coordinate system. For stability and easier debugging, I added a `get_screenshot` function which saves screen.png to the server or the computer where the program is running, though I might strip out this feature in the future since it seems to be adding latency.
+
+NOTE: Researching ways to optimize the process, but planning to integrate everything to `main.py` first.
+
+## 05/06/2026:
+
+### 1. Added the initial `main.py`
+Integrating all fo the required the mock board, board solver, computer vision, and ADB I/O modules. In addition, features like loops and verbose solve time for debugging and optimization.
+
+NOTE: Might add a .txt or .json logging for all the saves so I can easily graph and visualize results, so far each solves seems to average around ~16-18 seconds. This seems to be significantly bottlenecked, not sure if it's because of the ADB tap latency but it should only be around ~80 to 120ms so it seems to checked out. I'll try to optimize the solver later on.

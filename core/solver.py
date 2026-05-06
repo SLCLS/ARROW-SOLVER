@@ -1,5 +1,5 @@
 import random
-from board import ArrowBoard
+from core.board import ArrowBoard
 
 class ArrowSolver:
     def __init__(self, board, verbose=False):
