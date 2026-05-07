@@ -7,22 +7,29 @@ from io_utils.adb_ctrl import ADBController
 from core.board import ArrowBoard
 from core.solver import BoardSolver
 
+CLAIM_BUTTON_POS = (540, 2050)
+
 def run_bot():
-    print("\n--- Initializing Arrow Solver Framework ---")
+    print("\n" + "="*45)
+    print("   INITIALIZING FULLY AUTONOMOUS FRAMEWORK")
+    print("="*45)
+
     scanner = BoardScanner()
     adb = ADBController()
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     screenshot_path = os.path.join(script_dir, "vision", "live_screen.png")
 
-    while True:
-        input("\n[READY] Open the game on your phone, then press ENTER to solve (or Ctrl+C to quit)...")
+    print("\n[READY] The bot is active.")
+    print("[!] Press Ctrl+C on the terminal to stop the program process.")
+    time.sleep(3)
 
+    while True:
         start_time = time.time()
 
         adb.get_screenshot(screenshot_path)
 
-        print("[VISION] Scanning board state...")
+        print("\n[VISION] Scanning board state...")
         board_state = scanner.scan_board(screenshot_path)
         
         game_board = ArrowBoard()
@@ -33,7 +40,9 @@ def run_bot():
 
         if not winning_sequence:
             print("[!] Sequence emptyy. Board iis either solved or unreadable.")
-
+            print("[ADB] Tapping 'Claim' just in case we are stuck on the win screen...")
+            adb.tap_pixel(*CLAIM_BUTTON_POS)
+            time.sleep(2)
             adb.execute_sequence(winning_sequence)
 
             total_time = time.time() - start_time
