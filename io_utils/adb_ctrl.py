@@ -26,6 +26,10 @@ class ADBController:
         cmd = ["adb", "shell", "input", "tap", str(x), str(y)]
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+    def tap_pixel(self, x, y):
+        cmd = ["adb", "shell", "input", "tap", str(x), str(y)]
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
     def execute_sequence(self, hex_sequence):
         if not hex_sequence:
             return

@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Program Specifics (logs)
+temp_docs/
+projects/INDEPENDENT/Arrow-Solver-2/logs.txt
+projects/INDEPENDENT/Arrow-Solver-2/vision/live_screen.png
+projects/INDEPENDENT/Arrow-Solver-2/vision/debug_board_scanned.png

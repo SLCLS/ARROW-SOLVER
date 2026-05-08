@@ -99,3 +99,13 @@ NOTE: Researching ways to optimize the process, but planning to integrate everyt
 Integrating all fo the required the mock board, board solver, computer vision, and ADB I/O modules. In addition, features like loops and verbose solve time for debugging and optimization.
 
 NOTE: Might add a .txt or .json logging for all the saves so I can easily graph and visualize results, so far each solves seems to average around ~16-18 seconds. This seems to be significantly bottlenecked, not sure if it's because of the ADB tap latency but it should only be around ~80 to 120ms so it seems to checked out. I'll try to optimize the solver later on.
+
+## 05/07/2026
+
+The initial prototype for `main.py` is currently running stable and taking ~17.50s per each solved. Planning to add an auto-logger and continuity extension to this module.
+
+### 1. Added loop cycle for the `main.py`. I also hardcoded the ADB coordinates of the claim button (set it to 540, 2050). Planning to automate this in the future but so far I mathematically calculated it to be two counts directly below the lower most tile on the game UI.
+
+## 05/08/2026
+
+### 1. Added `StatsLogger` class to `main.py` that basically tracks the total solves, time spent per each solves, and session statistics every end of each run on a the document `logs.txt` on the root directory. This helps me identify bottlenecks as well as performance overhead. I have observed that enabling scrcpy while running the program adds ~30% more time per each solve than running it independently.
