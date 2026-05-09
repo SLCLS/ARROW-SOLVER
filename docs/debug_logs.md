@@ -109,3 +109,7 @@ The initial prototype for `main.py` is currently running stable and taking ~17.5
 ## 05/08/2026
 
 ### 1. Added `StatsLogger` class to `main.py` that basically tracks the total solves, time spent per each solves, and session statistics every end of each run on a the document `logs.txt` on the root directory. This helps me identify bottlenecks as well as performance overhead. I have observed that enabling scrcpy while running the program adds ~30% more time per each solve than running it independently.
+
+## 05/09/2026
+
+### 1. Added the `is_board_solved` validation function to ensure that the puzzle is completed before clicking the claim button. This solved the issue i've been experiencing when testing the program yesterday wherein for some reason, it goes into error mode after 3 hours of continous running. In addition, it also safeguards the program from unintentional user clicks.
