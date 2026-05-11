@@ -8,11 +8,21 @@ from io_utils.adb_ctrl import ADBController
 from core.board import ArrowBoard
 from core.solver import ArrowSolver
 from core.validator import is_board_solved
+from config import screen_map
 
 # X=540, Y=2050 are fixed value for my screen.
 
 CLAIM_BUTTON_POS = (540, 2050) 
 STARS_PER_SOLVE = 11258
+
+def get_dynamic_claim_pos():
+    center_x = screen_map[(0, 0)][0]
+    tile_spacing = screen_map[(0, 1)][1] - screen_map[(0, 0)][1]
+    bottom_y = screen_map[(0, 3)][1]
+    claim_y = int(bottom_y + (tile_spacing * 1.5))
+    return (center_x, claim_y)
+
+CLAIM_BUTTON_POS = get_dynamic_claim_pos()
 
 class StatsLogger:
     def __init__(self, log_path):
@@ -33,7 +43,7 @@ class StatsLogger:
                         self.total_time += float(time_str)
                         self.total_solves += 1
                     except Exception:
-                        pass 
+                        pass
 
     def log_run(self, time_taken):
         self.total_solves += 1

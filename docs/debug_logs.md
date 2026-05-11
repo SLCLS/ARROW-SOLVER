@@ -113,3 +113,11 @@ The initial prototype for `main.py` is currently running stable and taking ~17.5
 ## 05/09/2026
 
 ### 1. Added the `is_board_solved` validation function to ensure that the puzzle is completed before clicking the claim button. This solved the issue i've been experiencing when testing the program yesterday wherein for some reason, it goes into error mode after 3 hours of continous running. In addition, it also safeguards the program from unintentional user clicks.
+
+## 05/10/2026
+
+### 1. Added initial program overview and documentation for ADB on `README.md`.
+
+## 05/11/2026
+
+### 1. Previously, the location for the claim button (`CLAIM_BUTTON_POS`) is hardcoded to me device coordinate. I added a function `get_dynamic_claim_pos` to `main.py` to automate the extraction of the proper coordinate by applying this formula **`claim_y = bottom_y + tile_spacing * 1.5`** against the `screen_map` obtained from the earlier calibration.
