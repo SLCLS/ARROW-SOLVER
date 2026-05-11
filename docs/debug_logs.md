@@ -121,3 +121,5 @@ The initial prototype for `main.py` is currently running stable and taking ~17.5
 ## 05/11/2026
 
 ### 1. Previously, the location for the claim button (`CLAIM_BUTTON_POS`) is hardcoded to me device coordinate. I added a function `get_dynamic_claim_pos` to `main.py` to automate the extraction of the proper coordinate by applying this formula **`claim_y = bottom_y + tile_spacing * 1.5`** against the `screen_map` obtained from the earlier calibration.
+
+### 2. Analyzing the bottleneck on the program and started on refactoring some logic as well as unnecessary actions such as by changing tap commands from `input swipe x y x y 1` to `input tap x y`. In addition, I have replaced the two step pull (on taking `screen.png`) with a direct pipe `adb exec-out screencap -p`. Also did some trial and error as to how much I can lower the the `time.sleep()` calls.

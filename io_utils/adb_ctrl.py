@@ -31,33 +31,21 @@ class ADBController:
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def execute_sequence(self, hex_sequence):
-        if not hex_sequence:
-            return
-    
-        print(f"\n--- Executing {len(hex_sequence)} Moves ---")
+        if not hex_sequence: return
 
         commands = []
         for q, r in hex_sequence:
-            if (q, r) not in screen_map:
-                print(f"[ERROR] Solver outputted unmapped hex {(q, r)}. Skipping.")
-                continue
-        
-            x, y = screen_map[(q, r)]
-            commands.append(f"input tap {x} {y}")
+            if (q, r) in screen_map:
+                x, y = screen_map[(q, r)]
+                commands.append(f"input swipe {x} {y} {x} {y} 1")
 
         batch_string = "; ".join(commands)
 
-        start_time = time.time()
         subprocess.run(["adb", "shell", batch_string])
-        end_time = time.time()
-
-        print(f"[SUCCESS] Sequence executed in {end_time - start_time:.2f} seconds.")
 
     def get_screenshot(self, save_path):
-        print("[ADB] Capturing screen...")
-
-        subprocess.run(["adb", "shell", "screencap", "-p", "/sdcard/bot_screen.png"], stdout=subprocess.DEVNULL)
-        subprocess.run(["adb", "pull", "/sdcard/botscreen.png", save_path], stdout=subprocess.DEVNULL)
+        with open(save_path, "wb") as f:
+            subprocess.run(["adb", "exec-out", "screencap", "-p"], stdout=f)
 
 if __name__ == "__main__":
     adb = ADBController()
