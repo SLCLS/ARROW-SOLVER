@@ -47,6 +47,9 @@ class ADBController:
         with open(save_path, "wb") as f:
             subprocess.run(["adb", "exec-out", "screencap", "-p"], stdout=f)
 
+    def shutdown(self):
+        pass
+
 if __name__ == "__main__":
     adb = ADBController()
 

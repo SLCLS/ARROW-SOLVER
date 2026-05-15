@@ -104,28 +104,43 @@ NOTE: Might add a .txt or .json logging for all the saves so I can easily graph 
 
 The initial prototype for `main.py` is currently running stable and taking ~17.50s per each solved. Planning to add an auto-logger and continuity extension to this module.
 
-### 1. Added loop cycle for the `main.py`. I also hardcoded the ADB coordinates of the claim button (set it to 540, 2050). Planning to automate this in the future but so far I mathematically calculated it to be two counts directly below the lower most tile on the game UI.
+### 1. Added loop cycle for the `main.py`.
+I also hardcoded the ADB coordinates of the claim button (set it to 540, 2050). Planning to automate this in the future but so far I mathematically calculated it to be two counts directly below the lower most tile on the game UI.
 
 ## 05/08/2026
 
-### 1. Added `StatsLogger` class to `main.py` that basically tracks the total solves, time spent per each solves, and session statistics every end of each run on a the document `logs.txt` on the root directory. This helps me identify bottlenecks as well as performance overhead. I have observed that enabling scrcpy while running the program adds ~30% more time per each solve than running it independently.
+### 1. Added `StatsLogger` class to `main.py`.
+It basically tracks the total solves, time spent per each solves, and session statistics every end of each run on a the document `logs.txt` on the root directory. This helps me identify bottlenecks as well as performance overhead. I have observed that enabling scrcpy while running the program adds ~30% more time per each solve than running it independently.
 
 ## 05/09/2026
 
-### 1. Added the `is_board_solved` validation function to ensure that the puzzle is completed before clicking the claim button. This solved the issue i've been experiencing when testing the program yesterday wherein for some reason, it goes into error mode after 3 hours of continous running. In addition, it also safeguards the program from unintentional user clicks.
+### 1. Added the `is_board_solved`.
+A validation function to ensure that the puzzle is completed before clicking the claim button. This solved the issue i've been experiencing when testing the program yesterday wherein for some reason, it goes into error mode after 3 hours of continous running. In addition, it also safeguards the program from unintentional user clicks.
 
 ## 05/10/2026
 
-### 1. Added initial program overview and documentation for ADB on `README.md`.
+Added initial program overview and documentation for ADB on `README.md`.
 
 ## 05/11/2026
 
-### 1. Previously, the location for the claim button (`CLAIM_BUTTON_POS`) is hardcoded to me device coordinate. I added a function `get_dynamic_claim_pos` to `main.py` to automate the extraction of the proper coordinate by applying this formula **`claim_y = bottom_y + tile_spacing * 1.5`** against the `screen_map` obtained from the earlier calibration.
+### 1. Claim coord automation
+Previously, the location for the claim button (`CLAIM_BUTTON_POS`) is hardcoded to me device coordinate. I added a function `get_dynamic_claim_pos` to `main.py` to automate the extraction of the proper coordinate by applying this formula **`claim_y = bottom_y + tile_spacing * 1.5`** against the `screen_map` obtained from the earlier calibration.
 
-### 2. Analyzing the bottleneck on the program and started on refactoring some logic as well as unnecessary actions such as by changing tap commands from `input swipe x y x y 1` to `input tap x y`. In addition, I have replaced the two step pull (on taking `screen.png`) with a direct pipe `adb exec-out screencap -p`. Also did some trial and error as to how much I can lower the the `time.sleep()` calls.
+### 2. Optimizations on the algorithm.
+Analyzing the bottleneck on the program and started on refactoring some logic as well as unnecessary actions such as by changing tap commands from `input swipe x y x y 1` to `input tap x y`. In addition, I have replaced the two step pull (on taking `screen.png`) with a direct pipe `adb exec-out screencap -p`. Also did some trial and error as to how much I can lower the the `time.sleep()` calls.
 
 ## 05/12/2026
 
-### 1. Made some changes to optimize the `solver.py` algorithm. Instead of using `self.solution_taps` (list) to record each individual tap, i introduced `self.tap_map` (dictionary mapping of q and r) to track tap counts of tiles per modulo 6, this removes the redundant taps that previously causes each solves to have 150+ moves.
+### 1. Made some changes to optimize the `solver.py` algorithm.
+Instead of using `self.solution_taps` (list) to record each individual tap, i introduced `self.tap_map` (dictionary mapping of q and r) to track tap counts of tiles per modulo 6, this removes the redundant taps that previously causes each solves to have 150+ moves.
 
-### 2. I added the `self.solution_taps` method on `solver.py` which technically uses the host CPU to guarantee that the returned execution sequence is as short and efficient as possibles. + Some minor code changes and logging improvement.
+### 2. I added the `self.solution_taps` method on `solver.py`.
+Which technically uses the host CPU to guarantee that the returned execution sequence is as short and efficient as possibles. + Some minor code changes and logging improvement.
+
+## 05/13/2026 - 05/15/2026
+
+### 1. Major refactoring on the `solver.py` module.
+In which I replaced `execute_endgame` and `solve` method with a new "null space traversal" finder for the solution. But the main focus would be the implementation of `itertools.product` to bruteforce all of the possible tap combinations (***1,296 cases*** wohoo!) for the tap rows which guarantees the optimal solution for each solve. Also added some more verbosity and cleaned up some stuffs.
+
+### 2. Added an experimental high-speed, low latencyy solver via Scrcpy.
+See `scrcpy_ctrl.py` wherein i added another automation control bridge option for controlling an Android device. This, in theory, with a compatible device (better if rooted) can lower the tap latency from ~130-170ms to ~30ms.
