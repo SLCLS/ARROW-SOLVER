@@ -1,5 +1,3 @@
-# Screen map from calibrate.py
-
 screen_map = {
     (-3, 0): (141, 1146),
     (-3, 1): (141, 1298),
@@ -39,6 +37,3 @@ screen_map = {
     (3, -1): (939, 1450),
     (3, 0): (939, 1602),
 }
-
-
-EXECUTION_MODE = 'ADB'

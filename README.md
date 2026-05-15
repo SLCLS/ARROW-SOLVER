@@ -1,9 +1,9 @@
 # <h2><p align="center">**ARROW SOLVER (EXPERT)**</p></h2>
 
-This Python program is a fully autonomous, high-speed solver for the **Arrow Puzzle** in ***Expert Difficulty*** for the game **Exponential Idle**. It implements Computer Vision using **OpenCV** ('cv2'), specificallyy utilizinig *Canny Edge Detection* to isolate and recogniize numerical shapes with 100% accuracy, entirely bypassing the UI background noise and color variations. For device integration, it uses **ADB** libraries in favor of native Pythno `subprocess` to compile and push batched *unix shell commands* over USB or Wireless debugging bridge, eliminating unnecessary input latency and allowing for instantaneous multi-tap sequences. The framework features a completely self-driving execution loop, persistent statistics logger, anda *validation gate* that autonomously re-scans the screen to validiate board completion before claiming rewards.
+This Python program is a fully autonomous, high-speed solver for the **Arrow Puzzle** in ***Expert difficulty*** for the game "Exponential Idle". It implements Computer Vision using **OpenCV** (`cv2`), specifically utilizing *Canny Edge Detection* to isolate and recognize numerical shapes with 100% accuracy, entirely bypassing UI background noise and color variations. For device integration, it uses **ADB** libraries in favor of native Python `subprocess` to compile and push batched *Unix shell commands* over the USB bridge (or wirelessly), eliminating input latency and allowing for instantaneous multi-tap sequences. The framework features a completely self-driving execution loop, a persistent statistics logger, and a *validation gate* that autonomously re-scans the screen to validate board completion before claiming rewards.
 
 <p align="center">
-    <img src="https://github.com/user-attachments/assets/8aa4678b-e96b-4477-b2f4-10394db9672c" alt="Arrow Solver Demo" width="300"/>
+  <img src="https://github.com/user-attachments/assets/b38fe21a-c53e-4e40-9d8a-1366725f5820" alt="Arrow Solver Demo" width="300"/>
 </p>
 
 ## 📁 Program Structure

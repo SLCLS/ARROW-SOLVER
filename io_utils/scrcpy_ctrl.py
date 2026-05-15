@@ -2,31 +2,31 @@ import time
 import os
 import sys
 import cv2
-import scrcpy_ctrl
+import scrcpy
 
-sys.path.append(os.path.dirname(os.path.dirnam(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import screen_map
 
 def exact_sleep(duration):
     target = time.perf_counter() + duration
-    while time.part_counter() < target:
+    while time.perf_counter() < target:
         pass
 
 class ScrcpyController:
     TAP_HOLD_TIME = 0.03
     TAP_INTERVAL = 0.03
-    SAVE_TILE_COOLDOWN = 0.25
+    SAME_TILE_COOLDOWN = 0.25
 
     def __init__(self):
         print("[SCRCPY] Booting Socket Bridge. Injecting server into device...")
-
+        
         self.client = scrcpy.Client(max_fps=15, bitrate=2000000)
         self.client.start(threaded=True)
-
+        
         print("[SCRCPY] Waiting for memory stream...")
         while self.client.last_frame is None:
             time.sleep(0.1)
-
+            
         print("[SCRCPY] Stream locked. Execution bridge ready.")
 
     def get_screenshot(self, save_path):
@@ -45,20 +45,20 @@ class ScrcpyController:
 
     def execute_sequence(self, hex_sequence):
         if not hex_sequence: return
-
+        
         last_coord = None
-
+        
         for q, r in hex_sequence:
             if (q, r) in screen_map:
                 
                 if (q, r) == last_coord:
                     exact_sleep(self.SAME_TILE_COOLDOWN)
-
+                    
                 x, y = screen_map[(q, r)]
                 self.tap_pixel(x, y)
-
+                
                 exact_sleep(self.TAP_INTERVAL)
                 last_coord = (q, r)
-
+                
     def shutdown(self):
         self.client.stop()
