@@ -14,6 +14,7 @@ Arrow-Solver-2/
 │   ├── solver.py          # Math logic to calculate sequences/solution
 │   └── validator.py       # Verification gate
 ├── docs/                  # Assorted documentation/reference images
+│   ├── debug_logs.md      # Comprehensive Development Logs
 │   ├── solver_demo.gif    # Demonstration GIF
 ├── io_utils/
 │   └── adb_ctrl.py        # ADB batch execution and screen capture
